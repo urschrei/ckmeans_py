@@ -7,3 +7,14 @@ Minimizing the difference within groups – what Wang & Song refer to as `within
 Being a dynamic approach, this algorithm is based on two matrices that store incrementally-computed values for squared deviations and backtracking indexes.
 
 Unlike the [original implementation](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html), this implementation does not include any code to automatically determine the optimal number of clusters: this information needs to be explicitly provided. It **does** provide the `roundbreaks` method to aid labelling, however.
+
+# Example
+```python
+from ckmeans import ckmeans
+
+
+data = [1.0, 2.0, 3.0, 4.0, 100.0, 101.0, 102.0, 103.0]
+clusters = 2
+result = ckmeans(data, clusters)
+assert result == [[1.0, 2.0, 3.0, 4.0], [100.0, 101.0, 102.0, 103.0]]
+```
