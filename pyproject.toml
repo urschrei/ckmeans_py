@@ -30,8 +30,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 [project.urls]
-Repository = "https://github.com/urschrei/ckmeanspy"
-Tracker = "https://github.com/urschrei/ckmeanspy/issues"
+Repository = "https://github.com/urschrei/ckmeans_py"
+Tracker = "https://github.com/urschrei/ckmeans_py/issues"
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
