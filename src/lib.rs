@@ -49,9 +49,14 @@ strict, resulting in classes ranging “from x to x”. A better approach is to 
 number that separates the lowest point from a class from the highest point in the preceding
 class — thus giving just enough precision to distinguish the classes.
 This function is closer to what Jenks returns: k - 1 “breaks” in the data, useful for labelling.")]
-fn roundbreaks_wrapper(data: Vec<f64>, k: usize) -> PyResult<Vec<f64>> {
-    match rndb(&data, k.try_into().unwrap()) {
-        Ok(result) => Ok(result),
+fn roundbreaks_wrapper(
+    py: Python,
+    data: PyReadonlyArray1<f64>,
+    k: usize,
+) -> PyResult<Py<PyArray1<f64>>> {
+    let array_view = data.as_slice().unwrap();
+    match rndb(array_view, k.try_into().unwrap()) {
+        Ok(result) => Ok(PyArray1::from_vec(py, result).into()),
         Err(err) => Err(PyRuntimeError::new_err(format!("{}", err))),
     }
 }
