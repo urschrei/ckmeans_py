@@ -1,7 +1,6 @@
 use ::ckmeans::ckmeans as ckm;
 use ::ckmeans::roundbreaks as rndb;
 use numpy::borrow::PyReadonlyArray1;
-use numpy::PyArray1;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
