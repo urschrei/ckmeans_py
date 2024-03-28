@@ -30,7 +30,7 @@ classifiers = [
 [project.urls]
 Repository = "https://github.com/urschrei/ckmeanspy"
 Tracker = "https://github.com/urschrei/ckmeanspy/issues"
-dynamic = "version"
+dynamic = "readme"
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
