@@ -1,5 +1,7 @@
 use ::ckmeans::ckmeans as ckm;
 use ::ckmeans::roundbreaks as rndb;
+use numpy::borrow::PyReadonlyArray1;
+use numpy::PyArray1;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
@@ -15,8 +17,9 @@ use pyo3::wrap_pyfunction;
 /// split into representative groups. This is very useful for visualization, where one may wish to
 /// represent a continuous variable in discrete colour or style groups. This function can provide
 /// groups – or “classes” – that emphasize differences between data.
-fn ckmeans_wrapper(data: Vec<f64>, k: usize) -> PyResult<Vec<Vec<f64>>> {
-    match ckm(&data, k.try_into().unwrap()) {
+fn ckmeans_wrapper(data: PyReadonlyArray1<f64>, k: usize) -> PyResult<Vec<Vec<f64>>> {
+    let array_view: &[f64] = data.as_slice().unwrap();
+    match ckm(array_view, k.try_into().unwrap()) {
         Ok(result) => Ok(result),
         Err(err) => Err(PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!(
             "{}",

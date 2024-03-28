@@ -17,9 +17,10 @@ Install optional dependencies, then run `benchmark.py`
 # Example
 ```python
 from ckmeans import ckmeans
+import numpy as np
 
 
-data = [1.0, 2.0, 3.0, 4.0, 100.0, 101.0, 102.0, 103.0]
+data = np.array([1.0, 2.0, 3.0, 4.0, 100.0, 101.0, 102.0, 103.0])
 clusters = 2
 result = ckmeans(data, clusters)
 assert result == [[1.0, 2.0, 3.0, 4.0], [100.0, 101.0, 102.0, 103.0]]
