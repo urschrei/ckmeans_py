@@ -26,5 +26,5 @@ if __name__ == "__main__":
     rust_result = pstats.Stats("tests/output_stats_rust")
     cpp_result = pstats.Stats("tests/output_stats_cpp")
 
-    rust_result_sorted = rust_result.sort_stats("cumulative").print_stats(5)
-    cpp_result_sorted = cpp_result.sort_stats("cumulative").print_stats(5)
+    rust_result_sorted = rust_result.sort_stats("tottime").print_stats(5)
+    cpp_result_sorted = cpp_result.sort_stats("tottime").print_stats(5)
