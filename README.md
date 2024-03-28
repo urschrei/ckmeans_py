@@ -8,6 +8,9 @@ Being a dynamic approach, this algorithm is based on two matrices that store inc
 
 Unlike the [original implementation](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html), this implementation does not include any code to automatically determine the optimal number of clusters: this information needs to be explicitly provided. It **does** provide the `roundbreaks` method to aid labelling, however.
 
+## Implementation
+This library uses the [`ckmeans`](https://crates.io/crates/ckmeans) Rust crate, by the same author.
+
 # Example
 ```python
 from ckmeans import ckmeans
