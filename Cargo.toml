@@ -1,0 +1,13 @@
+[package]
+name = "ckmeans_py"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "ckmeans"
+crate-type = ["cdylib"]
+
+[dependencies]
+ckmeans = "1.0.6"
+pyo3 = "0.20.0"

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[tool.pytest.ini_options]
+minversion = "6.2.2"
+addopts = [
+    "--import-mode=importlib",
+]
+testpaths = [
+    "tests",
+]
+
+[project]
+name = "ckmeans"
+authors = [{ name = "Stephan Hügel", email = "urschrei@gmail.com" }]
+license = {file = "license.txt"}
+keywords = ["ckmeans", "clustering", "jenks"]
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dynamic = ["version", "readme"]
+[tool.maturin]
+features = ["pyo3/extension-module"]
+
+[project.optional-dependencies]
+test = [
+    "pytest >= 7.4.2",
+]
+[tool.maturin.dynamic]
+readme = {file = "README.md", content-type = "text/markdown"}
