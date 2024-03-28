@@ -13,6 +13,7 @@ testpaths = [
 
 [project]
 name = "ckmeans"
+description = "Optimal univariate (1D) clustering based on Ckmeans.1d.dp"
 authors = [{ name = "Stephan Hügel", email = "urschrei@gmail.com" }]
 license = {file = "license.txt"}
 keywords = ["ckmeans", "clustering", "jenks"]
