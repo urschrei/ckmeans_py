@@ -172,38 +172,17 @@ jobs:
           name: wheels-sdist
           path: dist
 
-  release_artifacts:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-    name: Release repaired and tested wheels
-    needs: [linux, windows, macos, sdist]
+  release:
+    name: Release
     runs-on: ubuntu-latest
-    environment: release
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs: [linux, windows, macos, sdist]
     permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
-      contents: write
-
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Download compressed artifacts
-      id: download
-      uses: actions/download-artifact@v4
-      with:
-        path: ./artifacts
-
-    - name: 'List downloaded files'
-      run: ls ${{ steps.download.outputs.download-path }}/**/*.*
-
-    - name: Create release and upload wheels
-      uses: ncipollo/release-action@v1
-      with:
-        allowUpdates: true
-        artifacts: "${{ steps.download.outputs.download-path }}/**/*.whl,${{ steps.download.outputs.download-path }}/**/*.gz,${{ steps.download.outputs.download-path }}/**/*.so,${{ steps.download.outputs.download-path }}/**/*.dylib,${{ steps.download.outputs.download-path }}/**/*.lib,${{ steps.download.outputs.download-path }}/**/*.dll"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: PyPI Publish
-      uses: pypa/gh-action-pypi-publish@v1.8.10
-      with:
-        packages-dir: ${{ steps.download.outputs.download-path }}/**/
-
+      - uses: actions/download-artifact@v4
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        with:
+          command: upload
+          args: --non-interactive --skip-existing wheels-*/*
