@@ -11,6 +11,9 @@ Unlike the [original implementation](https://cran.r-project.org/web/packages/Ckm
 ## Implementation
 This library uses the [`ckmeans`](https://crates.io/crates/ckmeans) Rust crate, by the same author.
 
+## Benchmarks
+Install optional dependencies, then run `benchmark.py`
+
 # Example
 ```python
 from ckmeans import ckmeans
