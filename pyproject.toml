@@ -27,6 +27,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+[project.urls]
+Repository = "https://github.com/urschrei/ckmeanspy"
+Tracker = "https://github.com/urschrei/ckmeanspy/issues"
 dynamic = ["version", "readme"]
 [tool.maturin]
 features = ["pyo3/extension-module"]
