@@ -11,8 +11,8 @@ crate-type = ["cdylib"]
 [dependencies]
 ckmeans = "1.0.6"
 ndarray = "0.15.6"
-numpy = "0.21.2"
-pyo3 = { version = "0.20.0", features = ["abi3", "abi3-py310"] }
+numpy = "0.20.0"
+pyo3 = { version = "0.21.2", features = ["abi3", "abi3-py310"] }
 
 [profile.release]
 lto = true
