@@ -17,17 +17,17 @@ or within sum-of-squares, means that groups are optimally homogenous within and 
 split into representative groups. This is very useful for visualization, where one may wish to
 represent a continuous variable in discrete colour or style groups. This function can provide
 groups – or “classes” – that emphasize differences between data.")]
-fn ckmeans_wrapper(
-    py: Python,
-    data: PyReadonlyArray1<f64>,
+fn ckmeans_wrapper<'a>(
+    py: Python<'a>,
+    data: PyReadonlyArray1<'a, f64>,
     k: usize,
-) -> PyResult<Vec<Py<PyArray1<f64>>>> {
+) -> PyResult<Vec<Bound<'a, PyArray1<f64>>>> {
     let array_view = data.as_slice().unwrap();
     match ckm(array_view, k.try_into().unwrap()) {
         Ok(result) => {
             let flattened: Vec<_> = result
                 .into_iter()
-                .map(|v| PyArray1::from_vec(py, v).to_owned())
+                .map(|v| PyArray1::from_vec_bound(py, v).to_owned())
                 .collect();
             Ok(flattened)
         }
@@ -56,14 +56,14 @@ fn roundbreaks_wrapper(
 ) -> PyResult<Py<PyArray1<f64>>> {
     let array_view = data.as_slice().unwrap();
     match rndb(array_view, k.try_into().unwrap()) {
-        Ok(result) => Ok(PyArray1::from_vec(py, result).into()),
+        Ok(result) => Ok(PyArray1::from_vec_bound(py, result).into()),
         Err(err) => Err(PyRuntimeError::new_err(format!("{}", err))),
     }
 }
 
 #[pymodule]
-fn ckmeans(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(ckmeans_wrapper, m)?)?;
-    m.add_function(wrap_pyfunction!(roundbreaks_wrapper, m)?)?;
+fn ckmeans(_py: Python, m: Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(ckmeans_wrapper, &m)?)?;
+    m.add_function(wrap_pyfunction!(roundbreaks_wrapper, &m)?)?;
     Ok(())
 }
