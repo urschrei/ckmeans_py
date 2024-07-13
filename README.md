@@ -65,3 +65,5 @@ clusters = 2
 result = breaks(data, clusters)
 assert result == [50.0,]
 ```
+# License
+[Blue Oak Model License 1.0.0](license.txt)
