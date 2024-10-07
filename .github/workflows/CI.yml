@@ -181,4 +181,4 @@ jobs:
           merge-multiple: true
 
       - name: PyPI Publish
-        uses: pypa/gh-action-pypi-publish@v1.10.2
+        uses: pypa/gh-action-pypi-publish@v1.10.3
