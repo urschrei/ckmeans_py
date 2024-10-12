@@ -38,6 +38,7 @@ jobs:
               3.10
               3.11
               3.12
+              3.13
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -92,6 +93,7 @@ jobs:
               3.10
               3.11
               3.12
+              3.13
           architecture: ${{ matrix.platform.target }}
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -131,6 +133,7 @@ jobs:
               3.10
               3.11
               3.12
+              3.13
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -181,4 +184,4 @@ jobs:
           merge-multiple: true
 
       - name: PyPI Publish
-        uses: pypa/gh-action-pypi-publish@v1.10.2
+        uses: pypa/gh-action-pypi-publish@v1.10.3
