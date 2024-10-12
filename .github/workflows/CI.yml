@@ -56,6 +56,7 @@ jobs:
           source .venv/bin/activate
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
+          pip install numpy
           pytest
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
@@ -108,6 +109,7 @@ jobs:
           source .venv/Scripts/activate
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
+          pip install numpy
           pytest
 
   macos:
@@ -142,6 +144,7 @@ jobs:
           source .venv/bin/activate
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
+          pip install numpy
           pytest
 
   sdist:
