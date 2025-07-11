@@ -31,7 +31,7 @@ fn ckmeans_wrapper<'a>(
                 .collect();
             Ok(flattened)
         }
-        Err(err) => Err(PyRuntimeError::new_err(format!("{}", err))),
+        Err(err) => Err(PyRuntimeError::new_err(format!("{err}"))),
     }
 }
 
@@ -57,7 +57,7 @@ fn roundbreaks_wrapper(
     let array_view = data.as_slice().unwrap();
     match rndb(array_view, k.try_into().unwrap()) {
         Ok(result) => Ok(PyArray1::from_vec(py, result).into()),
-        Err(err) => Err(PyRuntimeError::new_err(format!("{}", err))),
+        Err(err) => Err(PyRuntimeError::new_err(format!("{err}"))),
     }
 }
 
