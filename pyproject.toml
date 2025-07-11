@@ -13,6 +13,7 @@ testpaths = [
 
 [project]
 name = "ckmeans"
+dynamic = ["version"]
 description = "Optimal univariate (1D) clustering based on Ckmeans.1d.dp"
 authors = [{ name = "Stephan Hügel", email = "urschrei@gmail.com" }]
 license = {file = "license.txt"}
@@ -41,4 +42,4 @@ test = [
     "ckmeans-1d-dp >= 4.3.4.4"
 ]
 [tool.maturin.dynamic]
-readme = {file = "README.md", content-type = "text/markdown"}
+

@@ -27,7 +27,7 @@ fn ckmeans_wrapper<'a>(
         Ok(result) => {
             let flattened: Vec<_> = result
                 .into_iter()
-                .map(|v| PyArray1::from_vec_bound(py, v).to_owned())
+                .map(|v| PyArray1::from_vec(py, v).to_owned())
                 .collect();
             Ok(flattened)
         }
@@ -56,7 +56,7 @@ fn roundbreaks_wrapper(
 ) -> PyResult<Py<PyArray1<f64>>> {
     let array_view = data.as_slice().unwrap();
     match rndb(array_view, k.try_into().unwrap()) {
-        Ok(result) => Ok(PyArray1::from_vec_bound(py, result).into()),
+        Ok(result) => Ok(PyArray1::from_vec(py, result).into()),
         Err(err) => Err(PyRuntimeError::new_err(format!("{}", err))),
     }
 }

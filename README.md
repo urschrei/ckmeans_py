@@ -38,7 +38,7 @@ This method is a port of the [visionscarto](https://observablehq.com/@visionscar
 ## Benchmarks
 Install optional dependencies, then run `benchmark.py`.
 
-[ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) is about 20 % faster, but note that it only returns _indices_ identifying each cluster to which the input belongs; if you actually want to cluster your data, you need to do that yourself which I strongly suspect might be slower overall. On the other hand, if all you want is indices it may be a better choice.
+[ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) is about 10 % slower than this package, but note that in addition, it only returns _indices_ identifying each cluster to which the input belongs; if you actually want to cluster your data you need to do that yourself.
 
 # Examples
 ```python
