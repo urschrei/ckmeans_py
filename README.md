@@ -35,8 +35,12 @@ This function is closer to what Jenks returns: `k - 1` “breaks” in the data,
 
 This method is a port of the [visionscarto](https://observablehq.com/@visionscarto/natural-breaks#round) method of the same name.
 
+# Install for **local** development
+1. Ensure that `maturin` and a recent Rust toolchain are installed
+2. `maturin develop --release` (you will need to re-run this command if you're hacking on the source and want to e.g. benchmark your changes)
+
 ## Benchmarks
-Install optional dependencies, then run `benchmark.py`.
+run `uv run benchmark.py`.
 
 [ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) is about 10 % slower than this package, but note that in addition, it only returns _indices_ identifying each cluster to which the input belongs; if you actually want to cluster your data you need to do that yourself.
 

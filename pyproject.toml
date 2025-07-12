@@ -36,10 +36,9 @@ Tracker = "https://github.com/urschrei/ckmeans_py/issues"
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
-[project.optional-dependencies]
-test = [
-    "pytest >= 7.4.2",
-    "ckmeans-1d-dp >= 4.3.4.4"
+[dependency-groups]
+dev = [
+    "ckmeans-1d-dp>=4.3.4.4",
+    "pytest-benchmark>=5.1.0",
 ]
 [tool.maturin.dynamic]
-
