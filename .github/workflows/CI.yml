@@ -57,6 +57,7 @@ jobs:
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
           pip install pytest-benchmark[histogram]
+          pip install ckmeans_1d_dp
           pip install numpy
           pytest
       - name: pytest
@@ -69,7 +70,7 @@ jobs:
           install: |
             apt-get update
             apt-get install -y --no-install-recommends python3 python3-pip
-            pip3 install -U pip pytest pytest-benchmark[histogram] numpy
+            pip3 install -U pip pytest pytest-benchmark[histogram] ckmeans_1d_dp numpy
           run: |
             set -e
             pip3 install ckmeans --find-links dist --force-reinstall
@@ -111,6 +112,7 @@ jobs:
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
           pip install pytest-benchmark[histogram]
+          pip install ckmeans_1d_dp
           pip install numpy
           pytest
 
@@ -147,6 +149,7 @@ jobs:
           pip install ckmeans --find-links dist --force-reinstall
           pip install pytest
           pip install pytest-benchmark[histogram]
+          pip install ckmeans_1d_dp
           pip install numpy
           pytest
 
