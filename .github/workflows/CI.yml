@@ -70,7 +70,9 @@ jobs:
           install: |
             apt-get update
             apt-get install -y --no-install-recommends python3 python3-pip
-            pip3 install -U pip pytest pytest-benchmark[histogram] ckmeans_1d_dp numpy
+            pip3 install -U pip pytest pytest-benchmark[histogram] numpy
+            # Try to install ckmeans_1d_dp, but don't fail if it's not available for this architecture
+            pip3 install ckmeans_1d_dp || true
           run: |
             set -e
             pip3 install ckmeans --find-links dist --force-reinstall
