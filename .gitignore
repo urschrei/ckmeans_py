@@ -70,3 +70,6 @@ docs/_build/
 
 # Pyenv
 .python-version
+
+# Benchmark histograms
+benchmark_results*.svg

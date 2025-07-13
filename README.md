@@ -40,9 +40,18 @@ This method is a port of the [visionscarto](https://observablehq.com/@visionscar
 2. `maturin develop --release` (you will need to re-run this command if you're hacking on the source and want to e.g. benchmark your changes)
 
 ## Benchmarks
-run `uv run benchmark.py`.
+Benchmarks can be run using `uv run pytest --benchmark-only`.
 
-[ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) is about 10 % slower than this package, but note that in addition, it only returns _indices_ identifying each cluster to which the input belongs; if you actually want to cluster your data you need to do that yourself.
+The benchmarks compare this Rust implementation against [ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) (C++ implementation) across different data sizes and cluster counts:
+- 110k samples with 5 or 20 clusters
+- 1M samples with 5 or 20 clusters
+
+Results are grouped for meaningful comparison between implementations with identical parameters. Benchmark results also generate histogram visualisations saved as SVG files.
+
+### Results
+`ckmeans` is around 10 % faster than `ckmeans.1d.dp`, and around 20 % faster than the [original R package](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html) that wraps the same CPP library `ckmeans.1d.dp`.
+
+Note: The ckmeans-1d-dp Python package only returns _indices_ identifying each cluster to which the input belongs; if you actually want to cluster your data you need to do that yourself.
 
 # Examples
 ```python

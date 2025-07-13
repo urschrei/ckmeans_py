@@ -6,6 +6,12 @@ build-backend = "maturin"
 minversion = "6.2.2"
 addopts = [
     "--import-mode=importlib",
+    "--benchmark-skip",
+    "--benchmark-group-by=group",
+    "--benchmark-warmup=on",
+    "--benchmark-warmup-iterations=5",
+    "--benchmark-columns=min,max,mean,stddev,ops",
+    "--benchmark-histogram=benchmark_results",
 ]
 testpaths = [
     "tests",
@@ -39,6 +45,6 @@ features = ["pyo3/extension-module"]
 [dependency-groups]
 dev = [
     "ckmeans-1d-dp>=4.3.4.4",
-    "pytest-benchmark>=5.1.0",
+    "pytest-benchmark[histogram]>=5.1.0",
 ]
 [tool.maturin.dynamic]
