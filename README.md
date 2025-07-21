@@ -35,6 +35,59 @@ This function is closer to what Jenks returns: `k - 1` “breaks” in the data,
 
 This method is a port of the [visionscarto](https://observablehq.com/@visionscarto/natural-breaks#round) method of the same name.
 
+## Error Handling
+
+The following custom exceptions may be raised:
+
+### Exception Hierarchy
+- `CkmeansError` - Base exception for all ckmeans-specific errors
+  - `InvalidDataError` - Raised for data validation issues
+  - `InvalidClusterCountError` - Raised for invalid k values
+  - `ComputationError` - Raised when the underlying algorithm fails
+
+### Common Error Conditions
+
+#### InvalidDataError
+- Empty input array
+- Input contains NaN values
+- Input contains infinite values
+
+#### InvalidClusterCountError
+- k = 0 (must be greater than 0)
+- k > number of data points
+- k > 255 (maximum value that fits in a u8)
+
+### Example Error Handling
+
+```python
+import numpy as np
+import ckmeans
+
+# Handle empty data
+try:
+    result = ckmeans.ckmeans(np.array([]), 2)
+except ckmeans.InvalidDataError as e:
+    print(f"Data error: {e}")  # "Data error: Input data array is empty"
+
+# Handle invalid k
+try:
+    result = ckmeans.ckmeans(np.array([1, 2, 3]), 5)
+except ckmeans.InvalidClusterCountError as e:
+    print(f"Cluster count error: {e}")  # "Cluster count error: Number of clusters (5) cannot exceed the number of data points (3)"
+
+# Handle NaN values
+try:
+    result = ckmeans.ckmeans(np.array([1, 2, np.nan, 4]), 2)
+except ckmeans.InvalidDataError as e:
+    print(f"Data error: {e}")  # "Data error: Input data contains NaN at index 2"
+
+# Catch all ckmeans errors
+try:
+    result = ckmeans.ckmeans(data, k)
+except ckmeans.CkmeansError as e:
+    print(f"Clustering failed: {e}")
+```
+
 # Install for **local** development
 1. Ensure that `maturin` and a recent Rust toolchain are installed
 2. `maturin develop --release` (you will need to re-run this command if you're hacking on the source and want to e.g. benchmark your changes)
