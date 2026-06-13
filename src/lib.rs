@@ -1,7 +1,7 @@
 use ::ckmeans::ckmeans as ckm;
 use ::ckmeans::roundbreaks as rndb;
-use numpy::borrow::PyReadonlyArray1;
 use numpy::PyArray1;
+use numpy::borrow::PyReadonlyArray1;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
@@ -62,7 +62,7 @@ fn roundbreaks_wrapper(
 }
 
 #[pymodule]
-fn ckmeans(_py: Python, m: Bound<'_, PyModule>) -> PyResult<()> {
+fn _ckmeans(_py: Python, m: Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(ckmeans_wrapper, &m)?)?;
     m.add_function(wrap_pyfunction!(roundbreaks_wrapper, &m)?)?;
     Ok(())

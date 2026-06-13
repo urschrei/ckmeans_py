@@ -5,7 +5,7 @@ edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "ckmeans"
+name = "_ckmeans"
 crate-type = ["cdylib"]
 
 [dependencies]
