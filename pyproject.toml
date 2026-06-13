@@ -25,6 +25,7 @@ authors = [{ name = "Stephan Hügel", email = "urschrei@gmail.com" }]
 license = {file = "license.txt"}
 keywords = ["ckmeans", "clustering", "jenks"]
 requires-python = ">=3.10"
+dependencies = ["numpy>=2.0.0"]
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
@@ -41,6 +42,8 @@ Repository = "https://github.com/urschrei/ckmeans_py"
 Tracker = "https://github.com/urschrei/ckmeans_py/issues"
 [tool.maturin]
 features = ["pyo3/extension-module"]
+python-source = "."
+module-name = "ckmeans._ckmeans"
 
 [dependency-groups]
 dev = [
