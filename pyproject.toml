@@ -50,4 +50,3 @@ dev = [
     "ckmeans-1d-dp>=4.3.4.4",
     "pytest-benchmark[histogram]>=5.1.0",
 ]
-[tool.maturin.dynamic]
