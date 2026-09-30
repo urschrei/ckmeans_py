@@ -21,6 +21,7 @@ testpaths = [
 name = "ckmeans"
 dynamic = ["version"]
 description = "Optimal univariate (1D) clustering based on Ckmeans.1d.dp"
+readme = "README.md"
 authors = [{ name = "Stephan Hügel", email = "urschrei@gmail.com" }]
 license = {file = "license.txt"}
 keywords = ["ckmeans", "clustering", "jenks"]
