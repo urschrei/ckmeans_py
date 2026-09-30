@@ -1,8 +1,9 @@
 use ::ckmeans::CkmeansErr;
 use ::ckmeans::ckmeans as ckm;
 use ::ckmeans::roundbreaks as rndb;
+use numpy::AllowTypeChange;
 use numpy::PyArray1;
-use numpy::borrow::PyReadonlyArray1;
+use numpy::PyArrayLike1;
 use pyo3::create_exception;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::exceptions::PyValueError;
@@ -39,6 +40,18 @@ fn to_nclusters(k: i64, name: &str) -> PyResult<u8> {
         .map_err(|_| CkmeansError::new_err(format!("{name} must be from 1 to 255, not {k}")))
 }
 
+/// Input data: any object that NumPy can convert to a 1D `float64` array.
+type Data<'py> = PyArrayLike1<'py, f64, AllowTypeChange>;
+
+/// Copy the input data into a `Vec`.
+///
+/// The copy lets the calculation run without the GIL, because other threads
+/// cannot then change the data during the calculation. It also accepts arrays
+/// that are not contiguous in memory.
+fn to_values(data: &Data<'_>) -> Vec<f64> {
+    data.as_array().to_vec()
+}
+
 #[pyfunction]
 #[pyo3(name = "ckmeans")]
 #[pyo3(text_signature = "ckmeans(data, k, /)
@@ -52,13 +65,12 @@ represent a continuous variable in discrete colour or style groups. This functio
 groups – or “classes” – that emphasize differences between data.")]
 fn ckmeans_wrapper<'a>(
     py: Python<'a>,
-    data: PyReadonlyArray1<'a, f64>,
+    data: Data<'a>,
     k: i64,
 ) -> PyResult<Vec<Bound<'a, PyArray1<f64>>>> {
     let nclusters = to_nclusters(k, "k")?;
-    // A copy also accepts arrays that are not contiguous in memory.
-    let values = data.as_array().to_vec();
-    let result = ckm(&values, nclusters).map_err(to_pyerr)?;
+    let values = to_values(&data);
+    let result = py.detach(|| ckm(&values, nclusters)).map_err(to_pyerr)?;
     Ok(result
         .into_iter()
         .map(|v| PyArray1::from_vec(py, v))
@@ -81,12 +93,12 @@ class — thus giving just enough precision to distinguish the classes.
 This function is closer to what Jenks returns: k - 1 “breaks” in the data, useful for labelling.")]
 fn roundbreaks_wrapper<'a>(
     py: Python<'a>,
-    data: PyReadonlyArray1<'a, f64>,
+    data: Data<'a>,
     k: i64,
 ) -> PyResult<Bound<'a, PyArray1<f64>>> {
     let nclusters = to_nclusters(k, "k")?;
-    let values = data.as_array().to_vec();
-    let result = rndb(&values, nclusters).map_err(to_pyerr)?;
+    let values = to_values(&data);
+    let result = py.detach(|| rndb(&values, nclusters)).map_err(to_pyerr)?;
     Ok(PyArray1::from_vec(py, result))
 }
 
