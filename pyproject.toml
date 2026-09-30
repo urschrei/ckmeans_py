@@ -56,6 +56,7 @@ cache-keys = [{ file = "pyproject.toml" }, { file = "Cargo.toml" }, { file = "Ca
 
 [tool.maturin.generate-ci.github]
 pytest = true
+trusted-publishing = true
 
 [tool.maturin.generate-ci.github.linux]
 targets = ["x86_64", "x86", "aarch64"]
