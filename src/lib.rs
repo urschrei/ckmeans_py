@@ -52,17 +52,33 @@ fn to_values(data: &Data<'_>) -> Vec<f64> {
     data.as_array().to_vec()
 }
 
+/// Cluster data into k groups with the least within-group sum of squares.
+///
+/// The algorithm is the dynamic programme of Wang & Song (2011). The groups are
+/// optimally homogeneous, which makes them useful to show a continuous
+/// variable as discrete colour or style classes.
+///
+/// Parameters
+/// ----------
+/// data : array_like
+///     One-dimensional data. The data is converted to float64.
+/// k : int
+///     The number of clusters, from 1 to 255.
+///
+/// Returns
+/// -------
+/// list of numpy.ndarray
+///     The clusters, in ascending order of value. Each cluster is sorted. If
+///     the data has fewer than k distinct values, there is one cluster for each
+///     distinct value.
+///
+/// Raises
+/// ------
+/// CkmeansError
+///     If k is less than 1, greater than 255 or greater than the number of
+///     values, or if the data contains NaN.
 #[pyfunction]
-#[pyo3(name = "ckmeans")]
-#[pyo3(text_signature = "ckmeans(data, k, /)
---
-Cluster data into k bins
-
-Minimizing the difference within groups – what Wang & Song refer to as withinss,
-or within sum-of-squares, means that groups are optimally homogenous within and the data are
-split into representative groups. This is very useful for visualization, where one may wish to
-represent a continuous variable in discrete colour or style groups. This function can provide
-groups – or “classes” – that emphasize differences between data.")]
+#[pyo3(name = "ckmeans", signature = (data, /, k))]
 fn ckmeans_wrapper<'a>(
     py: Python<'a>,
     data: Data<'a>,
@@ -77,20 +93,34 @@ fn ckmeans_wrapper<'a>(
         .collect())
 }
 
+/// Calculate the breaks between k clusters, for labels and legends.
+///
+/// Each break b is between the highest value of a cluster (last) and the lowest
+/// value of the next cluster (first): last < b <= first. The break is the
+/// roundest number in that interval, so a legend shows only the precision
+/// that is necessary to separate the clusters. The method is based on the
+/// visionscarto natural-breaks method.
+///
+/// Parameters
+/// ----------
+/// data : array_like
+///     One-dimensional data. The data is converted to float64.
+/// k : int
+///     The number of clusters, from 1 to 255.
+///
+/// Returns
+/// -------
+/// numpy.ndarray
+///     One break fewer than the number of clusters. If the data has fewer than
+///     k distinct values, there are fewer than k - 1 breaks.
+///
+/// Raises
+/// ------
+/// CkmeansError
+///     If k is less than 1, greater than 255 or greater than the number of
+///     values, or if the data contains NaN.
 #[pyfunction]
-#[pyo3(name = "breaks")]
-#[pyo3(text_signature = "breaks(data, k, /)
---
-Calculate k - 1 breaks in the data, distinguishing classes for labelling or visualisation
-
-The boundaries of the classes returned by ckmeans are “ugly” in the sense that the values
-returned are the lower bound of each cluster, which can’t be used for labelling, since they
-might have many decimal places. To create a legend, the values should be rounded — but the
-rounding might be either too loose (and would result in spurious decimal places), or too
-strict, resulting in classes ranging “from x to x”. A better approach is to choose the roundest
-number that separates the lowest point from a class from the highest point in the preceding
-class — thus giving just enough precision to distinguish the classes.
-This function is closer to what Jenks returns: k - 1 “breaks” in the data, useful for labelling.")]
+#[pyo3(name = "breaks", signature = (data, /, k))]
 fn roundbreaks_wrapper<'a>(
     py: Python<'a>,
     data: Data<'a>,

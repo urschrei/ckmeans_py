@@ -42,3 +42,18 @@ def test_threads() -> None:
     for got, want in zip(results, expected, strict=True):
         for got_cluster, want_cluster in zip(got, want, strict=True):
             np.testing.assert_array_equal(got_cluster, want_cluster)
+
+
+@pytest.mark.parametrize("func", [ckmeans, breaks])
+def test_k_as_keyword(func) -> None:
+    by_position = func(DATA, 2)
+    by_keyword = func(DATA, k=2)
+    assert len(by_position) == len(by_keyword)
+    for got, want in zip(by_keyword, by_position, strict=True):
+        np.testing.assert_array_equal(got, want)
+
+
+@pytest.mark.parametrize("func", [ckmeans, breaks])
+def test_data_is_positional_only(func) -> None:
+    with pytest.raises(TypeError):
+        func(data=DATA, k=2)
