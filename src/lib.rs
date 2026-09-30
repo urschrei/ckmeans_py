@@ -1,6 +1,6 @@
 use ::ckmeans::CkmeansConfig;
 use ::ckmeans::CkmeansErr;
-use ::ckmeans::ckmeans as ckm;
+use ::ckmeans::ckmeans_indices;
 use ::ckmeans::ckmeans_optimal;
 use ::ckmeans::roundbreaks as rndb;
 use numpy::AllowTypeChange;
@@ -11,6 +11,7 @@ use pyo3::exceptions::PyRuntimeError;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyList;
+use pyo3::types::PySlice;
 use pyo3::wrap_pyfunction;
 
 create_exception!(
@@ -71,9 +72,9 @@ fn to_values(data: &Data<'_>) -> Vec<f64> {
 /// Returns
 /// -------
 /// list of numpy.ndarray
-///     The clusters, in ascending order of value. Each cluster is sorted. If
-///     the data has fewer than k distinct values, there is one cluster for each
-///     distinct value.
+///     The clusters, in ascending order of value. Each cluster is sorted, and
+///     is a view of one sorted copy of the data. If the data has fewer than k
+///     distinct values, there is one cluster for each distinct value.
 ///
 /// Raises
 /// ------
@@ -89,11 +90,19 @@ fn ckmeans_wrapper<'a>(
 ) -> PyResult<Vec<Bound<'a, PyArray1<f64>>>> {
     let nclusters = to_nclusters(k, "k")?;
     let values = to_values(&data);
-    let result = py.detach(|| ckm(&values, nclusters)).map_err(to_pyerr)?;
-    Ok(result
+    let (sorted, ranges) = py
+        .detach(|| ckmeans_indices(&values, nclusters))
+        .map_err(to_pyerr)?;
+    // Each cluster is a view of one sorted array. The indices are less than
+    // the length of a slice, so they are not greater than isize::MAX.
+    let sorted = PyArray1::from_vec(py, sorted);
+    ranges
         .into_iter()
-        .map(|v| PyArray1::from_vec(py, v))
-        .collect())
+        .map(|(start, end)| {
+            let slice = PySlice::new(py, start as isize, end as isize + 1, 1);
+            Ok(sorted.get_item(slice)?.cast_into::<PyArray1<f64>>()?)
+        })
+        .collect()
 }
 
 /// Calculate the breaks between k clusters, for labels and legends.
