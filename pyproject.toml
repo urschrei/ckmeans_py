@@ -53,3 +53,13 @@ dev = [
 
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }, { file = "Cargo.toml" }, { file = "Cargo.lock" }, { file = "src/**/*.rs" }]
+
+[tool.maturin.generate-ci.github]
+pytest = true
+
+[tool.maturin.generate-ci.github.linux]
+targets = ["x86_64", "x86", "aarch64"]
+
+[tool.maturin.generate-ci.github.windows]
+
+[tool.maturin.generate-ci.github.macos]
