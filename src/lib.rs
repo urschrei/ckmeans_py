@@ -1,5 +1,7 @@
+use ::ckmeans::CkmeansConfig;
 use ::ckmeans::CkmeansErr;
 use ::ckmeans::ckmeans as ckm;
+use ::ckmeans::ckmeans_optimal;
 use ::ckmeans::roundbreaks as rndb;
 use numpy::AllowTypeChange;
 use numpy::PyArray1;
@@ -8,6 +10,7 @@ use pyo3::create_exception;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use pyo3::types::PyList;
 use pyo3::wrap_pyfunction;
 
 create_exception!(
@@ -132,10 +135,118 @@ fn roundbreaks_wrapper<'a>(
     Ok(PyArray1::from_vec(py, result))
 }
 
+/// The result of `ckmeans_optimal`.
+#[pyclass(frozen, get_all, module = "ckmeans")]
+struct OptimalResult {
+    /// The chosen number of clusters.
+    k: u8,
+    /// The clusters, in ascending order of value.
+    clusters: Py<PyList>,
+    /// The mean of each cluster.
+    centers: Py<PyArray1<f64>>,
+    /// The number of values in each cluster.
+    sizes: Py<PyArray1<isize>>,
+    /// The within-cluster sum of squares of each cluster.
+    withinss: Py<PyArray1<f64>>,
+    /// The candidate numbers of clusters.
+    ks: Py<PyArray1<isize>>,
+    /// The BIC of each candidate number of clusters.
+    bic: Py<PyArray1<f64>>,
+}
+
+#[pymethods]
+impl OptimalResult {
+    fn __repr__(&self, py: Python<'_>) -> PyResult<String> {
+        Ok(format!(
+            "OptimalResult(k={}, centers={}, sizes={}, withinss={}, ks={}, bic={})",
+            self.k,
+            self.centers.bind(py).repr()?,
+            self.sizes.bind(py).repr()?,
+            self.withinss.bind(py).repr()?,
+            self.ks.bind(py).repr()?,
+            self.bic.bind(py).repr()?,
+        ))
+    }
+}
+
+/// Cluster data with the number of clusters that has the lowest BIC.
+///
+/// The function clusters the data for each k from k_min to k_max and chooses
+/// the k with the lowest Bayesian Information Criterion (Song & Zhong 2020).
+/// k_max is capped at the number of distinct values in the data.
+///
+/// Parameters
+/// ----------
+/// data : array_like
+///     One-dimensional data. The data is converted to float64.
+/// k_min : int, default 1
+///     The lowest number of clusters to evaluate, from 1 to 255.
+/// k_max : int, default 9
+///     The highest number of clusters to evaluate, from 1 to 255.
+///
+/// Returns
+/// -------
+/// OptimalResult
+///     The chosen k, its clusters and their statistics, and the BIC of each
+///     candidate k. If the data contains an infinite value, each BIC is NaN
+///     and the result uses k_min.
+///
+/// Raises
+/// ------
+/// CkmeansError
+///     If k_min is less than 1, k_min is greater than k_max, k_min is greater
+///     than the number of distinct values, either value is greater than 255,
+///     or the data contains NaN.
+#[pyfunction]
+#[pyo3(name = "ckmeans_optimal", signature = (data, /, k_min = 1, k_max = 9))]
+fn ckmeans_optimal_wrapper(
+    py: Python<'_>,
+    data: Data<'_>,
+    k_min: i64,
+    k_max: i64,
+) -> PyResult<OptimalResult> {
+    let config = CkmeansConfig {
+        k_min: to_nclusters(k_min, "k_min")?,
+        k_max: to_nclusters(k_max, "k_max")?,
+    };
+    let values = to_values(&data);
+    let result = py
+        .detach(|| ckmeans_optimal(&values, config))
+        .map_err(to_pyerr)?;
+    let clusters = PyList::new(
+        py,
+        result
+            .clusters
+            .into_iter()
+            .map(|cluster| PyArray1::from_vec(py, cluster)),
+    )?;
+    // A cluster size cannot be greater than isize::MAX, because it is the
+    // length of a slice.
+    let sizes: Vec<isize> = result.stats.iter().map(|s| s.size as isize).collect();
+    let centers: Vec<f64> = result.stats.iter().map(|s| s.center).collect();
+    let withinss: Vec<f64> = result.stats.iter().map(|s| s.withinss).collect();
+    let (ks, bic): (Vec<isize>, Vec<f64>) = result
+        .bic
+        .iter()
+        .map(|&(k, bic)| (isize::from(k), bic))
+        .unzip();
+    Ok(OptimalResult {
+        k: result.k,
+        clusters: clusters.unbind(),
+        centers: PyArray1::from_vec(py, centers).unbind(),
+        sizes: PyArray1::from_vec(py, sizes).unbind(),
+        withinss: PyArray1::from_vec(py, withinss).unbind(),
+        ks: PyArray1::from_vec(py, ks).unbind(),
+        bic: PyArray1::from_vec(py, bic).unbind(),
+    })
+}
+
 #[pymodule]
 fn _ckmeans(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("CkmeansError", m.py().get_type::<CkmeansError>())?;
     m.add_function(wrap_pyfunction!(ckmeans_wrapper, m)?)?;
     m.add_function(wrap_pyfunction!(roundbreaks_wrapper, m)?)?;
+    m.add_function(wrap_pyfunction!(ckmeans_optimal_wrapper, m)?)?;
+    m.add_class::<OptimalResult>()?;
     Ok(())
 }
