@@ -54,6 +54,9 @@ def test_k_as_keyword(func) -> None:
 
 
 @pytest.mark.parametrize("func", [ckmeans, breaks])
-def test_data_is_positional_only(func) -> None:
-    with pytest.raises(TypeError):
-        func(data=DATA, k=2)
+def test_data_as_keyword(func) -> None:
+    by_keyword = func(data=DATA, k=2)
+    by_position = func(DATA, 2)
+    assert len(by_keyword) == len(by_position)
+    for got, want in zip(by_keyword, by_position, strict=True):
+        np.testing.assert_array_equal(got, want)

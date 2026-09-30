@@ -82,7 +82,7 @@ fn to_values(data: &Data<'_>) -> Vec<f64> {
 ///     If k is less than 1, greater than 255 or greater than the number of
 ///     values, or if the data contains NaN.
 #[pyfunction]
-#[pyo3(name = "ckmeans", signature = (data, /, k))]
+#[pyo3(name = "ckmeans", signature = (data, k))]
 fn ckmeans_wrapper<'a>(
     py: Python<'a>,
     data: Data<'a>,
@@ -132,7 +132,7 @@ fn ckmeans_wrapper<'a>(
 ///     If k is less than 1, greater than 255 or greater than the number of
 ///     values, or if the data contains NaN.
 #[pyfunction]
-#[pyo3(name = "breaks", signature = (data, /, k))]
+#[pyo3(name = "breaks", signature = (data, k))]
 fn roundbreaks_wrapper<'a>(
     py: Python<'a>,
     data: Data<'a>,
@@ -178,11 +178,14 @@ impl OptimalResult {
     }
 }
 
-/// Cluster data with the number of clusters that has the lowest BIC.
+/// Find the best number of clusters for the data, and cluster the data.
 ///
-/// The function clusters the data for each k from k_min to k_max and chooses
-/// the k with the lowest Bayesian Information Criterion (Song & Zhong 2020).
-/// k_max is capped at the number of distinct values in the data.
+/// Use this function when you do not know how many clusters the data has. The
+/// function clusters the data once for each number of clusters k from k_min to
+/// k_max. It then chooses the k with the lowest Bayesian Information Criterion
+/// (BIC), which balances how closely the clusters fit the data against the
+/// number of clusters (Song & Zhong 2020). k_max is capped at the number of
+/// distinct values in the data.
 ///
 /// Parameters
 /// ----------
@@ -191,7 +194,9 @@ impl OptimalResult {
 /// k_min : int, default 1
 ///     The lowest number of clusters to evaluate, from 1 to 255.
 /// k_max : int, default 9
-///     The highest number of clusters to evaluate, from 1 to 255.
+///     The highest number of clusters to evaluate, from 1 to 255. The default
+///     range of 1 to 9 is the same as in the R package Ckmeans.1d.dp. If the
+///     data can have more than 9 clusters, set a higher value.
 ///
 /// Returns
 /// -------
@@ -207,7 +212,7 @@ impl OptimalResult {
 ///     than the number of distinct values, either value is greater than 255,
 ///     or the data contains NaN.
 #[pyfunction]
-#[pyo3(name = "ckmeans_optimal", signature = (data, /, k_min = 1, k_max = 9))]
+#[pyo3(name = "ckmeans_optimal", signature = (data, k_min = 1, k_max = 9))]
 fn ckmeans_optimal_wrapper(
     py: Python<'_>,
     data: Data<'_>,

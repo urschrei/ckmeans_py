@@ -32,13 +32,13 @@ class OptimalResult:
     def bic(self) -> npt.NDArray[np.float64]:
         """The BIC of each candidate number of clusters."""
 
-def ckmeans(data: npt.ArrayLike, /, k: int) -> list[npt.NDArray[np.float64]]:
+def ckmeans(data: npt.ArrayLike, k: int) -> list[npt.NDArray[np.float64]]:
     """Cluster data into k groups with the least within-group sum of squares."""
 
-def breaks(data: npt.ArrayLike, /, k: int) -> npt.NDArray[np.float64]:
+def breaks(data: npt.ArrayLike, k: int) -> npt.NDArray[np.float64]:
     """Calculate the breaks between k clusters, for labels and legends."""
 
 def ckmeans_optimal(
-    data: npt.ArrayLike, /, k_min: int = 1, k_max: int = 9
+    data: npt.ArrayLike, k_min: int = 1, k_max: int = 9
 ) -> OptimalResult:
-    """Cluster data with the number of clusters that has the lowest BIC."""
+    """Find the best number of clusters for the data, and cluster the data."""

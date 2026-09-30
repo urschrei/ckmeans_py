@@ -67,3 +67,9 @@ def test_frozen() -> None:
 
 def test_repr() -> None:
     assert repr(ckmeans_optimal(DATA)).startswith("OptimalResult(k=3, centers=")
+
+
+def test_keyword_arguments() -> None:
+    result = ckmeans_optimal(data=DATA, k_min=2, k_max=3)
+    assert result.k == 3
+    np.testing.assert_array_equal(result.ks, [2, 3])

@@ -13,20 +13,26 @@ This library uses the [`ckmeans`](https://crates.io/crates/ckmeans) Rust crate, 
 
 All functions accept any one-dimensional array-like input (a NumPy array of any numeric dtype, a list or a tuple), and convert it to `float64`. They release the GIL during the calculation.
 
-### `ckmeans(data, /, k)`
+### `ckmeans(data, k)`
 Cluster `data` into `k` groups with the least within-group sum of squares. Returns a list of `float64` arrays, one for each cluster, in ascending order of value. Each cluster is sorted.
 
 If `data` has fewer than `k` distinct values, there is one cluster for each distinct value.
 
-### `breaks(data, /, k)`
+### `breaks(data, k)`
 Calculate the breaks between `k` clusters, for labels and legends. Returns one break fewer than the number of clusters.
 
 The lower bounds of the clusters from `ckmeans` can have many decimal places, which makes them unsuitable for a legend. Rounding them can be too loose (spurious decimal places) or too strict (classes ranging "from `x` to `x`"). Each break `b` is instead the roundest number between the highest value of a cluster (`last`) and the lowest value of the next cluster (`first`), so that `last < b <= first`. It is a multiple of the largest power of ten that has a multiple in that interval; of those multiples, it is the one nearest the midpoint.
 
 This method is based on the [visionscarto](https://observablehq.com/@visionscarto/natural-breaks#round) method of the same name.
 
-### `ckmeans_optimal(data, /, k_min=1, k_max=9)`
-Cluster `data` for each `k` from `k_min` to `k_max`, and choose the `k` with the lowest BIC. `k_max` is capped at the number of distinct values in `data`. Returns an `OptimalResult`, with these attributes:
+### `ckmeans_optimal(data, k_min=1, k_max=9)`
+Find the best number of clusters for `data`, and cluster the data. Use this function when you do not know how many clusters the data has.
+
+The function clusters `data` once for each number of clusters `k` from `k_min` to `k_max`. It then chooses the `k` with the lowest Bayesian Information Criterion (BIC), which balances how closely the clusters fit the data against the number of clusters. `k_max` is capped at the number of distinct values in `data`.
+
+The default range of 1 to 9 is the same as in the R package [Ckmeans.1d.dp](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html). If the data can have more than 9 clusters, set a higher `k_max` (up to 255).
+
+Returns an `OptimalResult`, with these attributes:
 
 | Attribute | Type | Content |
 | --- | --- | --- |
@@ -55,7 +61,7 @@ All functions raise `CkmeansError`, a subclass of `ValueError`, if:
 - Invalid input raises `CkmeansError`, a subclass of `ValueError`. Version 0.2 raised `RuntimeError`, or `PanicException` for NaN input, `k` greater than 255 and non-contiguous arrays.
 - `breaks` uses the method of version 2.0 of the crate, and can return different values. For example, `breaks([1.0, 2.0, 3.0, 4.0, 100.0, 101.0, 102.0, 103.0], 2)` returns `[100.0]`, not `[50.0]`.
 - The clusters from `ckmeans` are views of one sorted copy of the input.
-- `k` can be given as a keyword argument.
+- `data` and `k` can be given as keyword arguments.
 - Python 3.11 or later is required.
 
 # Install for **local** development
