@@ -1,6 +1,9 @@
 import numpy as np
 import numpy.typing as npt
 
+class CkmeansError(ValueError):
+    """Raised when the input data or the number of clusters is not valid."""
+
 def ckmeans(data: npt.NDArray[np.float64], k: int, /) -> list[npt.NDArray[np.float64]]:
     """Cluster data into k bins."""
 
