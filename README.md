@@ -64,7 +64,7 @@ clusters = 2
 result = ckmeans(data, clusters)
 assert result == [
     np.array([1.0, 2.0, 3.0, 4.0]),
-    np.array([100.0, 101.0, 102.0, 103.0])
+    np.array([100.0, 101.0, 102.0, 103.0]),
 ]
 ```
 
@@ -76,7 +76,9 @@ import numpy as np
 data = np.array([1.0, 2.0, 3.0, 4.0, 100.0, 101.0, 102.0, 103.0])
 clusters = 2
 result = breaks(data, clusters)
-assert result == [50.0,]
+assert result == [
+    50.0,
+]
 ```
 # License
 [Blue Oak Model License 1.0.0](license.txt)
