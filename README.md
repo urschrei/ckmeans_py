@@ -28,7 +28,9 @@ This method is based on the [visionscarto](https://observablehq.com/@visionscart
 ### `ckmeans_optimal(data, k_min=1, k_max=9)`
 Find the best number of clusters for `data`, and cluster the data. Use this function when you do not know how many clusters the data has.
 
-The function clusters `data` once for each number of clusters `k` from `k_min` to `k_max`. It then chooses the `k` with the lowest Bayesian Information Criterion (BIC), which balances how closely the clusters fit the data against the number of clusters. `k_max` is capped at the number of distinct values in `data`.
+The function clusters `data` for each number of clusters `k` from `k_min` to `k_max`. It then chooses the `k` with the lowest Bayesian Information Criterion (BIC), which balances how closely the clusters fit the data against the number of clusters. The BIC is that of a Gaussian mixture with one component for each cluster. `k_max` is capped at the number of distinct values in `data`.
+
+`ckmeans_optimal` chooses the same `k` as the R package [Ckmeans.1d.dp](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html). That package reports the negative of the BIC values in `OptimalResult.bic`.
 
 The default range of 1 to 9 is the same as in the R package [Ckmeans.1d.dp](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html). If the data can have more than 9 clusters, set a higher `k_max` (up to 255).
 
@@ -56,6 +58,10 @@ All functions raise `CkmeansError`, a subclass of `ValueError`, if:
 ### Numerical limits
 - Infinite values are accepted, but a cluster that contains one has no finite sum of squares. The result is then a partition of the input with no optimality guarantee. `ckmeans_optimal` returns NaN BIC values for such input and uses `k_min`.
 - The costs are calculated in `float64` from cumulative sums. If the data spans a very large range (for example, values that differ by 1 alongside values of order 1e8), cost differences below `float64` resolution are lost. The result can then be sub-optimal by that amount, and equal values can be put in adjacent clusters. `breaks` then returns the first value of the upper cluster as the break.
+
+# Upgrading from 1.0
+- `ckmeans_optimal` uses version 2.1 of the crate. Version 1.0 chose `k_max`, or a value near it, for most input. The `k` and `bic` values of the result change for most input.
+- `ckmeans_optimal` is approximately 3.5 times faster for the default range of `k`.
 
 # Upgrading from 0.2
 - Invalid input raises `CkmeansError`, a subclass of `ValueError`. Version 0.2 raised `RuntimeError`, or `PanicException` for NaN input, `k` greater than 255 and non-contiguous arrays.

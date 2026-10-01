@@ -181,11 +181,15 @@ impl OptimalResult {
 /// Find the best number of clusters for the data, and cluster the data.
 ///
 /// Use this function when you do not know how many clusters the data has. The
-/// function clusters the data once for each number of clusters k from k_min to
+/// function clusters the data for each number of clusters k from k_min to
 /// k_max. It then chooses the k with the lowest Bayesian Information Criterion
 /// (BIC), which balances how closely the clusters fit the data against the
-/// number of clusters (Song & Zhong 2020). k_max is capped at the number of
-/// distinct values in the data.
+/// number of clusters (Song & Zhong 2020). The BIC is that of a Gaussian
+/// mixture with one component for each cluster. k_max is capped at the number
+/// of distinct values in the data.
+///
+/// The chosen k is the same as in the R package Ckmeans.1d.dp. That package
+/// reports the negative of the BIC values in the result.
 ///
 /// Parameters
 /// ----------
