@@ -18,6 +18,10 @@ def pytest_generate_tests(metafunc):
             ],
             ids=["110k_5clusters", "110k_20clusters", "1M_5clusters", "1M_20clusters"],
         )
+    elif "num_samples" in metafunc.fixturenames:
+        metafunc.parametrize(
+            "num_samples", [110000, int(1e6)], ids=["110k_optimal", "1M_optimal"]
+        )
 
 
 @pytest.fixture

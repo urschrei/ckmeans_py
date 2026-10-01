@@ -80,6 +80,7 @@ Benchmarks can be run using `uv run pytest --benchmark-only`.
 The benchmarks compare this Rust implementation against [ckmeans-1d-dp](https://pypi.org/project/ckmeans-1d-dp/) (C++ implementation) across different data sizes and cluster counts:
 - 110k samples with 5 or 20 clusters
 - 1M samples with 5 or 20 clusters
+- 110k and 1M samples with `ckmeans_optimal`, for `k` from 1 to 9
 
 Results are grouped for meaningful comparison between implementations with identical parameters. Benchmark results also generate histogram visualisations saved as SVG files.
 
@@ -96,6 +97,15 @@ Mean times on an Apple M2 Pro, with Uniform(1, 3) input:
 | 1M | 20 | 660.3 ms | 974.4 ms | 1043.8 ms |
 
 The R times are the mean of 20 calls (110k) or 5 calls (1M) of `Ckmeans.1d.dp(x, k)`, measured with `system.time`. The [`bench_cpp`](https://github.com/urschrei/ckmeans/tree/main/bench_cpp) crate in the `ckmeans` repository compares the Rust and C++ code without the Python layer, and gives similar results.
+
+`ckmeans_optimal` takes 24 % less time than `ckmeans-1d-dp` and 29 % less time than R `Ckmeans.1d.dp` when they choose `k` from 1 to 9 by BIC:
+
+| Samples | `ckmeans_optimal` | `ckmeans-1d-dp` 4.3.4.4 | R `Ckmeans.1d.dp` 4.3.5 |
+|---------|-------------------|-------------------------|-------------------------|
+| 110k | 47.6 ms | 62.6 ms | 67.1 ms |
+| 1M | 458.0 ms | 609.0 ms | 646.6 ms |
+
+The R times are the mean of 20 calls (110k) or 5 calls (1M) of `Ckmeans.1d.dp(x, k = c(1, 9))`.
 
 Note: The ckmeans-1d-dp Python package only returns _indices_ identifying each cluster to which the input belongs. If you want to cluster your data, you need to do that yourself.
 
