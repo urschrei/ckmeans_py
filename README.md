@@ -78,7 +78,18 @@ The benchmarks compare this Rust implementation against [ckmeans-1d-dp](https://
 Results are grouped for meaningful comparison between implementations with identical parameters. Benchmark results also generate histogram visualisations saved as SVG files.
 
 ### Results
-`ckmeans` is around 10 % faster than `ckmeans.1d.dp`, and around 20 % faster than the [original R package](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html) that wraps the same CPP library `ckmeans.1d.dp`.
+`ckmeans` takes 32 to 42 % less time than `ckmeans-1d-dp`, and 37 to 45 % less time than the [original R package](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html) that wraps the same C++ library.
+
+Mean times on an Apple M2 Pro, with Uniform(1, 3) input:
+
+| Samples | Clusters | `ckmeans` | `ckmeans-1d-dp` 4.3.4.4 | R `Ckmeans.1d.dp` 4.3.5 |
+|---------|----------|-----------|-------------------------|-------------------------|
+| 110k | 5 | 16.0 ms | 25.2 ms | 28.1 ms |
+| 110k | 20 | 59.7 ms | 102.9 ms | 109.1 ms |
+| 1M | 5 | 167.3 ms | 257.2 ms | 289.8 ms |
+| 1M | 20 | 660.3 ms | 974.4 ms | 1043.8 ms |
+
+The R times are the mean of 20 calls (110k) or 5 calls (1M) of `Ckmeans.1d.dp(x, k)`, measured with `system.time`. The [`bench_cpp`](https://github.com/urschrei/ckmeans/tree/main/bench_cpp) crate in the `ckmeans` repository compares the Rust and C++ code without the Python layer, and gives similar results.
 
 Note: The ckmeans-1d-dp Python package only returns _indices_ identifying each cluster to which the input belongs. If you want to cluster your data, you need to do that yourself.
 
