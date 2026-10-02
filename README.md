@@ -85,25 +85,25 @@ The benchmarks compare this Rust implementation against [ckmeans-1d-dp](https://
 Results are grouped for meaningful comparison between implementations with identical parameters. Benchmark results also generate histogram visualisations saved as SVG files.
 
 ### Results
-`ckmeans` takes 32 to 42 % less time than `ckmeans-1d-dp`, and 37 to 45 % less time than the [original R package](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html) that wraps the same C++ library.
+`ckmeans` takes 49 to 54 % less time than `ckmeans-1d-dp`, and 51 to 57 % less time than the [original R package](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html) that wraps the same C++ library.
 
 Mean times on an Apple M2 Pro, with Uniform(1, 3) input:
 
 | Samples | Clusters | `ckmeans` | `ckmeans-1d-dp` 4.3.4.4 | R `Ckmeans.1d.dp` 4.3.5 |
 |---------|----------|-----------|-------------------------|-------------------------|
-| 110k | 5 | 16.0 ms | 25.2 ms | 28.1 ms |
-| 110k | 20 | 59.7 ms | 102.9 ms | 109.1 ms |
-| 1M | 5 | 167.3 ms | 257.2 ms | 289.8 ms |
-| 1M | 20 | 660.3 ms | 974.4 ms | 1043.8 ms |
+| 110k | 5 | 12.4 ms | 25.2 ms | 28.1 ms |
+| 110k | 20 | 48.5 ms | 104.6 ms | 109.1 ms |
+| 1M | 5 | 124.7 ms | 260.8 ms | 289.8 ms |
+| 1M | 20 | 514.5 ms | 1011.8 ms | 1043.8 ms |
 
 The R times are the mean of 20 calls (110k) or 5 calls (1M) of `Ckmeans.1d.dp(x, k)`, measured with `system.time`. The [`bench_cpp`](https://github.com/urschrei/ckmeans/tree/main/bench_cpp) crate in the `ckmeans` repository compares the Rust and C++ code without the Python layer, and gives similar results.
 
-`ckmeans_optimal` takes 24 % less time than `ckmeans-1d-dp` and 29 % less time than R `Ckmeans.1d.dp` when they choose `k` from 1 to 9 by BIC:
+`ckmeans_optimal` takes 44 to 47 % less time than `ckmeans-1d-dp` and 46 to 47 % less time than R `Ckmeans.1d.dp` when they choose `k` from 1 to 9 by BIC:
 
 | Samples | `ckmeans_optimal` | `ckmeans-1d-dp` 4.3.4.4 | R `Ckmeans.1d.dp` 4.3.5 |
 |---------|-------------------|-------------------------|-------------------------|
-| 110k | 47.6 ms | 62.6 ms | 67.1 ms |
-| 1M | 458.0 ms | 609.0 ms | 646.6 ms |
+| 110k | 36.2 ms | 67.9 ms | 67.1 ms |
+| 1M | 345.4 ms | 614.6 ms | 646.6 ms |
 
 The R times are the mean of 20 calls (110k) or 5 calls (1M) of `Ckmeans.1d.dp(x, k = c(1, 9))`.
 
